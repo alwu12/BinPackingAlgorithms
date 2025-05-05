@@ -31,11 +31,16 @@ class Rank:
 	geometric_rank: int
 	uniform_rank: int
 
+	def __lt__(self, other: 'Rank') -> bool: #custom comparator and yippie i dont needa write eq or gt
+		if self.geometric_rank != other.geometric_rank:
+			return self.geometric_rank < other.geometric_rank
+		return self.uniform_rank < other.uniform_rank
+
 class ZipZipTree:
 	def __init__(self, capacity: int):
 		self.capacity = capacity
 		self.root = None
-		#self.size = 0
+		self.size = 0
 
 	def get_random_rank(self) -> Rank:
         # Geometric distribution with p=0.5 (0-based rank)
@@ -56,13 +61,14 @@ class ZipZipTree:
         
 
 	def insert(self, key: KeyType, val: ValType, rank: Rank = None):
+		self.size += 1
 		if rank is None:
 			rank = self.get_random_rank()
 
 		x = Node(key,val,rank)
 		cur = self.root
 		prev = None
-		while cur and (rank.geometric_rank < cur.rank.geometric_rank or (rank.geometric_rank == cur.rank.geometric_rank and key > cur.key)):
+		while cur and (rank < cur.rank or (rank == cur.rank and key > cur.key)):
 			prev = cur
 			if (key < cur.key):
 				cur = cur.left
@@ -79,6 +85,7 @@ class ZipZipTree:
 
 		if cur == None:
 			x.left = x.right = None
+			#print(f"RETURNING EARLY AS IN RIGHT NOW, KEY IS {key}")
 			return
 		if key < cur.key:
 			x.right = cur
@@ -86,7 +93,7 @@ class ZipZipTree:
 			x.left = cur
 		prev = x
 
-
+		
 		while cur:
 			fix = prev
 			if cur.key < key:
@@ -123,7 +130,7 @@ class ZipZipTree:
 			cur = right
 		elif right is None:
 			cur = left
-		elif left.rank.geometric_rank >= right.rank.geometric_rank:
+		elif left.rank >= right.rank:
 			cur = left
 		else:
 			cur = right
@@ -136,31 +143,76 @@ class ZipZipTree:
 			prev.right = cur
 
 		while left and right:
-			if left.rank.geometric_rank >= right.rank.geometric_rank:
-				while(left and left.rank.geometric_rank >= right.rank.geometric_rank):
+			if left.rank >= right.rank:
+				while(left and left.rank >= right.rank):
 					prev = left
 					left = left.right
 
 				prev.right = right
 			else:
-				while(right and left.rank.geometric_rank < right.rank.geometric_rank):
+				while(right and left.rank < right.rank):
 					prev = right
 					right = right.left
 				prev.left = left
-			
+		self.size -= 1
 
 
 	def find(self, key: KeyType) -> ValType:
-		pass
+		node = self.root
+		while node:
+			if key == node.key:
+				return node.val
+			node = node.left if key < node.key else node.right
+		
+		raise KeyError(f"Key {key} not found")
+	#should never get here cause we can assume item exists in tree
+		
 
 	def get_size(self) -> int:
-		pass
+		return self.size
 
 	def get_height(self) -> int:
-		pass
+		def get_height_helper(node: Node):
+			if not node:
+				return -1
+			return 1+max(get_height_helper(node.left),get_height_helper(node.right))
+		#basically recursing to find the longest path, and that will determine our height
+		return get_height_helper(self.root)
+
 
 	def get_depth(self, key: KeyType):
-		pass
+		def get_depth_helper(node: Node, key: KeyType, depth: int) -> int:
+			if not node:
+				return -1
+			if node.key == key:
+				return depth #node was found!
+			if key < node.key:
+				return get_depth_helper(node.left,key,depth+1)
+			return get_depth_helper(node.right,key,depth+1)
+		
+		return get_depth_helper(self.root,key,0)
+			
+	def print_tree(self):
+		def print_helper(node, level=0):
+			if not node:
+				return
+			# Print right subtree first (for readability, top-down)
+			print_helper(node.right, level + 1)
+			# Print current node with indentation
+			indent = "  " * level
+			left_key = node.left.key if node.left else None
+			right_key = node.right.key if node.right else None
+			print(f"{indent}Node(key={node.key}, val={node.val}, "
+				f"rank=(g={node.rank.geometric_rank}, u={node.rank.uniform_rank}), "
+				f"left={left_key}, right={right_key})")
+			# Print left subtree
+			print_helper(node.left, level + 1)
+		
+		if not self.root:
+			print("Empty tree")
+		else:
+			print("Tree nodes (in-order traversal):")
+			print_helper(self.root)
 
 	# feel free to define new methods in addition to the above
 	# fill in the definitions of each required member function (above),

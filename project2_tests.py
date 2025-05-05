@@ -51,7 +51,7 @@ def zip_tree_tests():
 
 	data = [InsertType(4, 'a', requirements.Rank(0, 9)), InsertType(5, 'b', requirements.Rank(0, 9)), InsertType(2, 'c', requirements.Rank(1, 12)), InsertType(1, 'd', requirements.Rank(1, 5))]
 	tree = create_tree_with_data(data)
-
+	#tree.print_tree()
 	print(f'find(4): {tree.find(4)}, Expected: a')
 	print(f'get_size(): {tree.get_size()}, Expected: 4')
 	print(f'get_height(): {tree.get_height()}, Expected: 2')
