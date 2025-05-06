@@ -2,13 +2,15 @@
 
 # explanations for member functions are provided in requirements.py
 
+EPS = 4e-11
+
 def next_fit(items: list[float], assignment: list[int], free_space: list[float]):
 
 	bin_index = 0
 	free_space.append(1.0)
 
 	for i,item in enumerate(items):
-		if item <= free_space[bin_index]:
+		if item <= free_space[bin_index] + EPS:
 			free_space[bin_index] -= item
 			assignment.append(bin_index)
 		else:
