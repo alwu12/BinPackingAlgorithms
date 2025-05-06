@@ -105,7 +105,9 @@ def bin_packing_tests():
 	# next-fit
 	expected_result = ProblemInstance(items = items, assignments = [0, 0, 1, 1, 2, 2, 3, 3], free_space = [0.1, 0.2, 0.1, 0.0])
 	test_algorithm(test1, expected_result, requirements.next_fit, 'next_fit')
-
+	'''
+	
+	'''
 	# first-fit
 	expected_result = ProblemInstance(items = items, assignments = [0, 0, 1, 1, 2, 1, 3, 3], free_space = [0.1, 0.0, 0.3, 0.0])
 	test_algorithm(test1, expected_result, requirements.first_fit, 'first_fit')
