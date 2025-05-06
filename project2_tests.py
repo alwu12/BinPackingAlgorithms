@@ -51,7 +51,7 @@ def zip_tree_tests():
 
 	data = [InsertType(4, 'a', requirements.Rank(0, 9)), InsertType(5, 'b', requirements.Rank(0, 9)), InsertType(2, 'c', requirements.Rank(1, 12)), InsertType(1, 'd', requirements.Rank(1, 5))]
 	tree = create_tree_with_data(data)
-	#tree.print_tree()
+	tree.print_tree()
 	print(f'find(4): {tree.find(4)}, Expected: a')
 	print(f'get_size(): {tree.get_size()}, Expected: 4')
 	print(f'get_height(): {tree.get_height()}, Expected: 2')
@@ -85,7 +85,15 @@ def zip_tree_tests():
 	print(f'random geometric rank mean: {geometric_rank_mean}, Expected: ~1')
 
 	# add new tests...
-
+	print('\ntesting remove and find')
+	#tree.print_tree()
+	tree.remove(2)  # Remove key 4
+	print(f'find(2): {tree.find(2)}, Expected: c')  # Check if another key still exists
+	print(f'find(5): {tree.find(5)}, Expected: b')  # Check key 5 still exists
+	print(f'find(1): {tree.find(1)}, Expected: d')  # Check key 1 still exists
+	print(f'find(4): {tree.find(4) if tree.find(4) is not None else "None"}, Expected: None')  # Check if removed
+	print(f'get_height(): {tree.get_height()}, Expected: 2')
+	tree.print_tree()
 def bin_packing_tests():
 	print('\ntesting bin packing\ntest 1')
 	items = [0.1, 0.8, 0.3, 0.5, 0.7, 0.2, 0.6, 0.4]

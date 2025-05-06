@@ -35,6 +35,9 @@ class Rank:
 		if self.geometric_rank != other.geometric_rank:
 			return self.geometric_rank < other.geometric_rank
 		return self.uniform_rank < other.uniform_rank
+	
+	def __ge__(self, other: 'Rank') -> bool:
+		return not self.__lt__(other)  # a >= b is equivalent to !(a < b)
 
 class ZipZipTree:
 	def __init__(self, capacity: int):
@@ -103,7 +106,7 @@ class ZipZipTree:
 			else:
 				while cur and cur.key >= key:
 					prev = cur
-					cur = cur.right
+					cur = cur.left
 			
 			if fix.key > key or (fix == x and prev.key > key):
 				fix.left = cur
@@ -121,8 +124,8 @@ class ZipZipTree:
 			else:
 				cur = cur.right
 
-		if not cur:
-			return  # Key not found
+		#if not cur:
+			#return  # Key not found
 		left = cur.left
 		right = cur.right
 
@@ -136,11 +139,23 @@ class ZipZipTree:
 			cur = right
 
 		if self.root and self.root.key == key:
+			'''
+			print(f"removing the root: {self.root.key}")
+			print(f"next root will be cur: {cur}")
+			if cur.left:
+				print(f"cur left {cur.left.key}")
+			if cur.right:
+				print(f"cur right {cur.right.key}")
+			print(f"left: {left}")
+			print(f"right: {right}")
+			'''
+			
 			self.root = cur
 		elif key < prev.key:
 			prev.left = cur
 		else:
 			prev.right = cur
+
 
 		while left and right:
 			if left.rank >= right.rank:
@@ -164,7 +179,7 @@ class ZipZipTree:
 				return node.val
 			node = node.left if key < node.key else node.right
 		
-		raise KeyError(f"Key {key} not found")
+		return None
 	#should never get here cause we can assume item exists in tree
 		
 
@@ -191,6 +206,8 @@ class ZipZipTree:
 			return get_depth_helper(node.right,key,depth+1)
 		
 		return get_depth_helper(self.root,key,0)
+	
+
 			
 	def print_tree(self):
 		def print_helper(node, level=0):
