@@ -355,7 +355,7 @@ def bin_packing_first_fit_tests():
 	# first-fit
 	expected_result = ProblemInstance(items=items, assignments=[0, 1, 0, 2, 2, 0, 3], free_space=[0.29, 0.25, 0.04, 0.36])
 	test_algorithm(test3, expected_result, requirements.first_fit, 'first_fit')
-
+	
 	# Test 4
 	print('\ntest 4')
 	items = [0.54, 0.67, 0.46, 0.57, 0.06, 0.23, 0.83, 0.64, 0.47, 0.03, 0.53, 0.74, 0.36, 0.24, 0.07, 0.25, 0.05, 0.63, 0.43, 0.04]
@@ -368,12 +368,31 @@ def bin_packing_first_fit_tests():
 	expected_result = ProblemInstance(items=items, assignments=[0, 1, 0, 2, 1, 1, 3, 4, 5, 1, 5, 6, 2, 4, 2, 6, 3, 7, 8, 3], free_space=[0, 0.01, 0, 0.08, 0.12, 0, 0.01, 0.37, 0.57])
 	test_algorithm(test4, expected_result, requirements.first_fit, 'first_fit')
 	
+	
+	
 
 
-    # Test 2
+def bin_packing_first_fit_test3():
+	print('\n--- Running first fit: Test 3 ---')
+	items = [0.43, 0.75, 0.25, 0.42, 0.54, 0.03, 0.64]
+	assignments = [0] * len(items)
+	free_space = list()
+
+	test3 = ProblemInstance(items=items, assignments=assignments, free_space=free_space)
+
+	# first-fit
+	expected_result = ProblemInstance(
+		items=items,
+		assignments=[0, 1, 0, 2, 2, 0, 3],
+		free_space=[0.29, 0.25, 0.04, 0.36]
+	)
+
+	test_algorithm(test3, expected_result, requirements.first_fit, 'first_fit')
+
 	
 	
 if __name__ == '__main__':
 	#zip_tree_tests()
 	#bin_packing_tests()
 	bin_packing_first_fit_tests()
+	#bin_packing_first_fit_test3()

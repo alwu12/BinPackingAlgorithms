@@ -2,7 +2,7 @@ from zipzip_tree import *
 from math import isclose
 import random
 
-random.seed(41)
+#random.seed(41)
 #42 is a passed case
 #41 is a failed case
 EPS = 4e-11
@@ -50,6 +50,8 @@ class ZipZipTreeFF(ZipZipTree):
 			x.left = None
 			x.right = None
 			#print(f"RETURNING EARLY AS IN RIGHT NOW, KEY IS {key}")
+			self.backpropagate_best_remaining(x) #update all parent's best remaining
+
 			return
 		if key < cur.key:
 			x.right = cur
@@ -199,5 +201,4 @@ class ZipZipTreeFF(ZipZipTree):
 		else:
 			print("Tree nodes (in-order traversal):")
 			print_helper(self.root)
-
 
