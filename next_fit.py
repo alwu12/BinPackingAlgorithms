@@ -13,6 +13,7 @@
 
 from math import isclose
 
+EPS = 4e-11
 def next_fit(items: list[float], assignment: list[int], free_space: list[float]):
 	#EPS = 4e-11
 	bin_index = 0
@@ -20,7 +21,7 @@ def next_fit(items: list[float], assignment: list[int], free_space: list[float])
 
 	for i,item in enumerate(items):
 		#if item <= free_space[bin_index] + EPS:
-		if item < free_space[bin_index] or isclose(item,free_space[bin_index]):
+		if item < free_space[bin_index] or isclose(item,free_space[bin_index],rel_tol=EPS):
 			free_space[bin_index] -= item
 			assignment.append(bin_index)
 		else:

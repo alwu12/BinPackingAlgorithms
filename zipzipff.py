@@ -2,6 +2,8 @@ from zipzip_tree import *
 from math import isclose
 
 
+EPS = 4e-11
+
 #in this zipzip tree, key will be the bin index
 #val will be the amount of space remaining
 class ZipZipTreeFF(ZipZipTree):
@@ -57,11 +59,11 @@ class ZipZipTreeFF(ZipZipTree):
 		while cur:
 			fix = prev
 			if cur.key < key:
-				while cur and cur.key <= key:
+				while cur and (cur.key < key or isclose(cur.key,key, rel_tol=EPS)):
 					prev = cur
 					cur = cur.right
 			else:
-				while cur and cur.key >= key:
+				while cur and (cur.key > key or isclose(cur.key,key, rel_tol=EPS)):
 					prev = cur
 					cur = cur.left
 			
@@ -72,67 +74,8 @@ class ZipZipTreeFF(ZipZipTree):
 				fix.right = cur
 				if cur: self.parents[cur] = fix  #  Update parent
 		self.backpropagate_best_remaining(x) #update all parent's best remaining
-
-	def remove(self, key: KeyType):
-		cur = self.root
 		
-		prev = None
-		while key != cur.key:
-			prev = cur
-			if key < cur.key:
-				cur = cur.left
-			else:
-				cur = cur.right
-
-		#if not cur:
-			#return  # Key not found
-		left = cur.left
-		right = cur.right
-
-		if left is None:
-			cur = right
-		elif right is None:
-			cur = left
-		elif left.rank >= right.rank:
-			cur = left
-		else:
-			cur = right
-
-		if self.root and self.root.key == key:
-			'''
-			print(f"removing the root: {self.root.key}")
-			print(f"next root will be cur: {cur}")
-			if cur.left:
-				print(f"cur left {cur.left.key}")
-			if cur.right:
-				print(f"cur right {cur.right.key}")
-			print(f"left: {left}")
-			print(f"right: {right}")
-			'''
-			
-			self.root = cur
-			
-		elif key < prev.key:
-			prev.left = cur
-		else:
-			prev.right = cur
-
-
-		while left and right:
-			if left.rank >= right.rank:
-				while(left and left.rank >= right.rank):
-					prev = left
-					left = left.right
-
-				prev.right = right
-			else:
-				while(right and left.rank < right.rank):
-					prev = right
-					right = right.left
-				prev.left = left
-		self.size -= 1
-		
-	def update_best_remaining(node: Node):
+	def update_best_remaining(self, node: Node):
 		if node is None:
 			return
 		
@@ -146,32 +89,42 @@ class ZipZipTreeFF(ZipZipTree):
 		while node is not None:
 			old_best = node.best_remaining
 			self.update_best_remaining(node)
-			if isclose(node.best_remaining, old_best):
+			if isclose(node.best_remaining, old_best, rel_tol=EPS):
 				break  # Early exit if no change
 			node = self.parents.get(node)
 
-	def find(self,size):
+	def find(self, size):
 		result = None
-
 		x = self.root
-		while x.best_remaining > size or isclose(x.best_remaining,size):
-			if x.left and (x.left.best_remaining > size or isclose(x.left.best_remaining,size)):
-				x = x.left #if the left bin has enough space
-			elif x.val > size or isclose(x.val, size):
-				result = x #if the left bin is too small and the current bin is fine
+		
+		while x:
+			# First, check if the left child has enough space
+			if x.left and (x.left.best_remaining > size + EPS or isclose(x.left.best_remaining, size, rel_tol=EPS)):
+				# Go left if the left subtree could have a better fit
+				x = x.left
+			# Then, check if the current node has enough space
+			elif x.best_remaining > size + EPS or isclose(x.best_remaining, size, rel_tol=EPS):
+				result = x  # This is the best fit for now
 				break
-			elif x.right and (x.right.best_remaining > size or isclose(x.right.best_remaining, size)):
-				x = x.right #if left and middle are too small, check right(lexicographically the last)
+			# Lastly, check the right child if there's no fit yet
+			elif x.right and (x.right.best_remaining > size + EPS or isclose(x.right.best_remaining, size, rel_tol=EPS)):
+				# Go right if the left and current nodes are not suitable
+				x = x.right
 			else:
-				break #current bin is too small, left and right are too small
-			#and as a result need new bin
+				# If no valid space left, break
+				break
+		
 		return result
+
 	
 	def allocate_bin(self, size, bin_index):
 		node = self.find(size)
 
 		if node:
-			node.val -= size
+			if isclose(node.val, size, rel_tol=EPS):
+				node.val = 0
+			else:
+				node.val -= size
 			self.backpropagate_best_remaining(node)
 			return node.key
 		else:
@@ -181,5 +134,28 @@ class ZipZipTreeFF(ZipZipTree):
 
 	
 
+	def print_tree(self):
+		def print_helper(node, level=0):
+			if not node:
+				return
+			# Print right subtree first (for readability, top-down)
+			print_helper(node.right, level + 1)
+			# Print current node with indentation
+			indent = "  " * level
+			left_key = node.left.key if node.left else None
+			right_key = node.right.key if node.right else None
+			parent = self.parents.get(node)
+			parent_key = parent.key if parent else None
+			print(f"{indent}Node(key={node.key}, val={node.val}, "
+				f"rank=(g={node.rank.geometric_rank}, u={node.rank.uniform_rank}), "
+				f"left={left_key}, right={right_key}, parent={parent_key})")
+			# Print left subtree
+			print_helper(node.left, level + 1)
+
+		if not self.root:
+			print("Empty tree")
+		else:
+			print("Tree nodes (in-order traversal):")
+			print_helper(self.root)
 
 

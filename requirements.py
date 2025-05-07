@@ -1,7 +1,7 @@
 # Import each one of your sorting algorithms below as follows:
 # Feel free to comment out these lines before your algorithms are implemented.
 from next_fit import next_fit
-#from first_fit import first_fit
+from first_fit import first_fit
 #from first_fit import first_fit_decreasing
 #from best_fit import best_fit
 #from best_fit import best_fit_decreasing

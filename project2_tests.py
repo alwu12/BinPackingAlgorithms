@@ -40,11 +40,16 @@ def is_equal(v1: list[float], v2: list[float]) -> bool:
 def test_algorithm(test: ProblemInstance, expected_result: ProblemInstance, algorithm: Callable[[list[float], list[int], list[float]], None], name: str):
 	test_copy = deepcopy(test)
 	algorithm(test_copy.items, test_copy.assignments, test_copy.free_space)
+	
 
 	if test_copy.assignments == expected_result.assignments and is_equal(test_copy.free_space, expected_result.free_space):
 		print(f'Test case passed: {name}')
 	else:
 		print(f'Test case failed: {name}')
+		print(f'Expected assignments: {expected_result.assignments}')
+		print(f'Actual assignments: {test_copy.assignments}')
+		print(f'Expected free space: {expected_result.free_space}')
+		print(f'Actual free space: {test_copy.free_space}')
 
 def zip_tree_tests():
 	print('testing ZipTree')
@@ -206,7 +211,92 @@ def bin_packing_tests():
 	test_algorithm(test4, expected_result, requirements.best_fit_decreasing, 'best_fit_decreasing')
 
 	# add new tests...
+def bin_packing_next_fit_tests():
+    print('\ntesting next-fit')
+    # Test 1
+    items = [0.1, 0.8, 0.3, 0.5, 0.7, 0.2, 0.6, 0.4]
+    assignments = [0] * len(items)
+    test1 = ProblemInstance(items, assignments, list())
+    expected = ProblemInstance(items, [0, 0, 1, 1, 2, 2, 3, 3], [0.1, 0.2, 0.1, 0.0])
+    test_algorithm(test1, expected, requirements.next_fit, 'next_fit')
 
+    # Test 2
+    items = [0.79, 0.88, 0.95, 0.12, 0.05, 0.46, 0.53, 0.64, 0.04, 0.38, 0.03, 0.26]
+    test2 = ProblemInstance(items, [0] * len(items), list())
+    expected = ProblemInstance(items, [0, 1, 2, 3, 3, 3, 4, 5, 5, 6, 6, 6],
+                               [0.21, 0.12, 0.05, 0.37, 0.47, 0.32, 0.33])
+    test_algorithm(test2, expected, requirements.next_fit, 'next_fit')
+
+    # Test 3
+    items = [0.43, 0.75, 0.25, 0.42, 0.54, 0.03, 0.64]
+    test3 = ProblemInstance(items, [0] * len(items), list())
+    expected = ProblemInstance(items, [0, 1, 1, 2, 2, 2, 3], [0.57, 0, 0.01, 0.36])
+    test_algorithm(test3, expected, requirements.next_fit, 'next_fit')
+
+    # Test 4
+    items = [0.54, 0.67, 0.46, 0.57, 0.06, 0.23, 0.83, 0.64, 0.47, 0.03,
+             0.53, 0.74, 0.36, 0.24, 0.07, 0.25, 0.05, 0.63, 0.43, 0.04]
+    test4 = ProblemInstance(items, [0] * len(items), list())
+    expected = ProblemInstance(items, [0, 1, 2, 3, 3, 3, 4, 5, 6, 6, 7, 8, 9, 9, 9, 9, 9, 10, 11, 11],
+                               [0.46, 0.33, 0.54, 0.14, 0.17, 0.36, 0.5, 0.47, 0.26, 0.03, 0.37, 0.53])
+    test_algorithm(test4, expected, requirements.next_fit, 'next_fit')
+
+def bin_packing_first_fit_tests():
+	print('\ntesting first fit\n')
+
+	# Test 1
+	print('test 1')
+	items = [0.1, 0.8, 0.3, 0.5, 0.7, 0.2, 0.6, 0.4]
+	assignments = [0] * len(items)
+	free_space = list()
+
+	test1 = ProblemInstance(items=items, assignments=assignments, free_space=free_space)
+
+	# first-fit
+	expected_result = ProblemInstance(items=items, assignments=[0, 0, 1, 1, 2, 1, 3, 3], free_space=[0.1, 0.0, 0.3, 0.0])
+	test_algorithm(test1, expected_result, requirements.first_fit, 'first_fit')
+
+	
+	print('\ntest 2')
+	items = [0.79, 0.88, 0.95, 0.12, 0.05, 0.46, 0.53, 0.64, 0.04, 0.38, 0.03, 0.26]
+	assignments = [0] * len(items)
+	free_space = list()
+
+	test2 = ProblemInstance(items=items, assignments=assignments, free_space=free_space)
+
+	# first-fit
+	expected_result = ProblemInstance(items=items, assignments=[0, 1, 2, 0, 0, 3, 3, 4, 0, 5, 1, 4], free_space=[0, 0.09, 0.05, 0.01, 0.1, 0.62])
+	test_algorithm(test2, expected_result, requirements.first_fit, 'first_fit')
+
+	# Test 3
+	print('\ntest 3')
+	items = [0.43, 0.75, 0.25, 0.42, 0.54, 0.03, 0.64]
+	assignments = [0] * len(items)
+	free_space = list()
+
+	test3 = ProblemInstance(items=items, assignments=assignments, free_space=free_space)
+
+	# first-fit
+	expected_result = ProblemInstance(items=items, assignments=[0, 1, 0, 2, 2, 0, 3], free_space=[0.29, 0.25, 0.04, 0.36])
+	test_algorithm(test3, expected_result, requirements.first_fit, 'first_fit')
+
+	# Test 4
+	print('\ntest 4')
+	items = [0.54, 0.67, 0.46, 0.57, 0.06, 0.23, 0.83, 0.64, 0.47, 0.03, 0.53, 0.74, 0.36, 0.24, 0.07, 0.25, 0.05, 0.63, 0.43, 0.04]
+	assignments = [0] * len(items)
+	free_space = list()
+
+	test4 = ProblemInstance(items=items, assignments=assignments, free_space=free_space)
+
+	# first-fit
+	expected_result = ProblemInstance(items=items, assignments=[0, 1, 0, 2, 1, 1, 3, 4, 5, 1, 5, 6, 2, 4, 2, 6, 3, 7, 8, 3], free_space=[0, 0.01, 0, 0.08, 0.12, 0, 0.01, 0.37, 0.57])
+	test_algorithm(test4, expected_result, requirements.first_fit, 'first_fit')
+	
+
+
+    # Test 2
+    
 if __name__ == '__main__':
-	zip_tree_tests()
+	#zip_tree_tests()
 	#bin_packing_tests()
+	bin_packing_first_fit_tests()
