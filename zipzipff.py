@@ -1,7 +1,10 @@
 from zipzip_tree import *
 from math import isclose
+import random
 
-
+random.seed(41)
+#42 is a passed case
+#41 is a failed case
 EPS = 4e-11
 
 #in this zipzip tree, key will be the bin index
@@ -31,7 +34,8 @@ class ZipZipTreeFF(ZipZipTree):
 				cur = cur.left
 			else:
 				cur = cur.right
-
+		#if prev:
+		#	print(f'\nfinished first while loop, prev = {prev.key}\n')
 		if cur == self.root:
 			self.root = x
 			self.parents[x] = None #  Track parent
@@ -42,9 +46,9 @@ class ZipZipTreeFF(ZipZipTree):
 			prev.right = x
 			self.parents[x] = prev  #  Track parent
 
-
 		if cur == None:
-			x.left = x.right = None
+			x.left = None
+			x.right = None
 			#print(f"RETURNING EARLY AS IN RIGHT NOW, KEY IS {key}")
 			return
 		if key < cur.key:
@@ -55,7 +59,7 @@ class ZipZipTreeFF(ZipZipTree):
 			self.parents[cur] = x  #  Update parent
 		prev = x
 
-		
+		#print(f'\nfinished section 3 if statements, prev is {prev.key}\n')
 		while cur:
 			fix = prev
 			if cur.key < key:
@@ -87,33 +91,71 @@ class ZipZipTreeFF(ZipZipTree):
 	
 	def backpropagate_best_remaining(self, node: Node):
 		while node is not None:
+			parent = self.parents.get(node)#debug starts here
+			#print("\n--- Backpropagating Node ---")
+			#print(f"Node      → key: {node.key}, val: {node.val}, best_remaining: {node.best_remaining}")
+			#if parent:
+			#	print(f"Parent    → key: {parent.key}, val: {parent.val}, best_remaining: {parent.best_remaining}")
+			#else:
+			#	print("Parent    → None")
+			#if node.left:
+			#	print(f"Left      → key: {node.left.key}, val: {node.left.val}, best_remaining: {node.left.best_remaining}")
+			#else:
+			#	print("Left      → None")
+			#if node.right:
+			#	print(f"Right     → key: {node.right.key}, val: {node.right.val}, best_remaining: {node.right.best_remaining}")
+			#else:
+			#	print("Right     → None")
+
 			old_best = node.best_remaining
 			self.update_best_remaining(node)
-			if isclose(node.best_remaining, old_best, rel_tol=EPS):
-				break  # Early exit if no change
-			node = self.parents.get(node)
+			#print(f"Updated   → old_best: {old_best}, new_best: {node.best_remaining}")
 
+			node = parent
+
+	
 	def find(self, size):
+		#print(f"Starting find with size: {size}")
 		result = None
 		x = self.root
-		
+
 		while x:
-			# First, check if the left child has enough space
+			#print(f"Visiting node with best_remaining: {x.best_remaining}")
+			#print(f"Node Value: {x.val}")
+			#if x.left:
+			#	print(f"  Left child exists with best_remaining: {x.left.best_remaining}")
+			#else:
+			#	print("  No left child")
+
 			if x.left and (x.left.best_remaining > size + EPS or isclose(x.left.best_remaining, size, rel_tol=EPS)):
-				# Go left if the left subtree could have a better fit
+			#	print("  Going left: left child has sufficient space")
 				x = x.left
-			# Then, check if the current node has enough space
-			elif x.best_remaining > size + EPS or isclose(x.best_remaining, size, rel_tol=EPS):
-				result = x  # This is the best fit for now
+			elif x.val > size + EPS or isclose(x.val, size, rel_tol=EPS):
+			#	print(f"  Found suitable node {x.key}")
+			#	print(f"x.val: {x.val}")
+			#	print(f"size: {size}")
+			#	print(f"x.val > size: {x.val > size}")
+			#	print(f"isclose(x.best_remaining, size, rel_tol=EPS): {isclose(x.best_remaining, size, rel_tol=EPS):}")
+				
+				result = x
 				break
-			# Lastly, check the right child if there's no fit yet
-			elif x.right and (x.right.best_remaining > size + EPS or isclose(x.right.best_remaining, size, rel_tol=EPS)):
-				# Go right if the left and current nodes are not suitable
-				x = x.right
+			elif x.right:
+			#	print(f"  Right child exists with best_remaining: {x.right.best_remaining}")
+				if x.right.best_remaining > size + EPS or isclose(x.right.best_remaining, size, rel_tol=EPS):
+			#		print("  Going right: right child has sufficient space")
+					x = x.right
+				else:
+			#		print("  Right child doesn't have enough space")
+					break
 			else:
-				# If no valid space left, break
+			#	print("  No suitable node found, breaking")
 				break
-		
+
+		#if result:
+		#	print(f"Returning node with best_remaining: {result.best_remaining}")
+		#else:
+		#	print("No suitable node found")
+
 		return result
 
 	
