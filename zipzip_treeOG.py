@@ -19,8 +19,6 @@ class Node:
 		self.rank = rank
 		self.left = left
 		self.right = right
-		self.best_remaining = val
-
 
 	def __str__(self):
 		return (f"Node(key={self.key}, val={self.val}, "
