@@ -2,15 +2,25 @@
 
 # explanations for member functions are provided in requirements.py
 
-EPS = 4e-11
+
+#we need an epsilon because floating point arithmetic is not exact
+#if item <= free_space[bin_index]
+#can fail even if the values should be equal mathematically — 
+#due to tiny rounding errors like 0.29999999999999993 instead of 0.3
+
+#An epsilon (EPS) is a tiny number (like 1e-11) 
+#that you use to allow a small margin of error in comparisons:
+
+from math import isclose
 
 def next_fit(items: list[float], assignment: list[int], free_space: list[float]):
-
+	#EPS = 4e-11
 	bin_index = 0
 	free_space.append(1.0)
 
 	for i,item in enumerate(items):
-		if item <= free_space[bin_index] + EPS:
+		#if item <= free_space[bin_index] + EPS:
+		if item < free_space[bin_index] or isclose(item,free_space[bin_index]):
 			free_space[bin_index] -= item
 			assignment.append(bin_index)
 		else:
