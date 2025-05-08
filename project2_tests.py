@@ -43,13 +43,13 @@ def test_algorithm(test: ProblemInstance, expected_result: ProblemInstance, algo
 	
 
 	if test_copy.assignments == expected_result.assignments and is_equal(test_copy.free_space, expected_result.free_space):
-		print(f'Test case passed: {name}')
+		print(f'Test case passed: {name}\n')
 	else:
 		print(f'Test case failed: {name}')
 		print(f'Expected assignments: {expected_result.assignments}')
 		print(f'Actual assignments: {test_copy.assignments}')
 		print(f'Expected free space: {expected_result.free_space}')
-		print(f'Actual free space: {test_copy.free_space}')
+		print(f'Actual free space: {test_copy.free_space}\n')
 
 def zip_tree_tests():
 	print('testing ZipTree')
@@ -371,28 +371,11 @@ def bin_packing_first_fit_tests():
 	
 	
 
-
-def bin_packing_first_fit_test3():
-	print('\n--- Running first fit: Test 3 ---')
-	items = [0.43, 0.75, 0.25, 0.42, 0.54, 0.03, 0.64]
-	assignments = [0] * len(items)
-	free_space = list()
-
-	test3 = ProblemInstance(items=items, assignments=assignments, free_space=free_space)
-
-	# first-fit
-	expected_result = ProblemInstance(
-		items=items,
-		assignments=[0, 1, 0, 2, 2, 0, 3],
-		free_space=[0.29, 0.25, 0.04, 0.36]
-	)
-
-	test_algorithm(test3, expected_result, requirements.first_fit, 'first_fit')
-
 	
 	
 if __name__ == '__main__':
 	#zip_tree_tests()
 	#bin_packing_tests()
-	bin_packing_first_fit_tests()
+	#bin_packing_first_fit_tests()
+	bin_packing_next_fit_tests()
 	#bin_packing_first_fit_test3()

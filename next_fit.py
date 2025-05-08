@@ -23,7 +23,7 @@ def next_fit(items: list[float], assignment: list[int], free_space: list[float])
 		#if item <= free_space[bin_index] + EPS:
 		if item < free_space[bin_index] or isclose(item,free_space[bin_index],rel_tol=EPS):
 			free_space[bin_index] -= item
-			assignment.append(bin_index)
+			assignment[i] = bin_index
 		else:
 			bin_index+=1
 			free_space.append(1 - item)
