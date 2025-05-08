@@ -1,6 +1,7 @@
 from math import isclose
 from decimal import Decimal, getcontext
 import zipzipff
+from tim_sort import tim_sort
 
 getcontext().prec = 45
 
@@ -31,6 +32,11 @@ def first_fit(items: list[float], assignment: list[int], free_space: list[float]
         #print(f"current item: {item}")
         #tree.print_tree()
 
+def first_fit_decreasing(items: list[float], assignment: list[int], free_space: list[float]):
+    tim_sort(items)
+    items = items[::-1]
+    first_fit(items,assignment,free_space)
+    
 
 '''
 def first_fit(items: list[float], assignment: list[int], free_space: list[float]):
