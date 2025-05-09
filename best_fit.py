@@ -25,6 +25,7 @@ def best_fit(items: list[float], assignment: list[int], free_space: list[float])
         # Print debugging information
         #print(f"\n\ncurrent item: {item}")
         #tree.print_tree()
+    return tree
 
 def best_fit_decreasing(items: list[float], assignment: list[int], free_space: list[float]):
     tim_sort(items)

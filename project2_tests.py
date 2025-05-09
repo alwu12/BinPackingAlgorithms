@@ -418,4 +418,4 @@ if __name__ == '__main__':
 	#bin_packing_first_fit_tests()
 	#bin_packing_next_fit_tests()
 	#bin_packing_first_fit_test3()
-	bin_packing_best_fit_tests()
+	#bin_packing_best_fit_tests()
