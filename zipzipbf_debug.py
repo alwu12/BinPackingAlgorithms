@@ -2,9 +2,7 @@ from zipzip_tree import *
 from math import isclose
 import random
 
-random.seed(43)
-#42 is a passed case
-#41 is a failed case
+#random.seed(2) #fails test case 4
 EPS = 4e-11
 
 class Node: 
@@ -50,12 +48,15 @@ class ZipZipTreeBF(ZipZipTree):
 				cur = cur.left
 			else:
 				cur = cur.right
+		
 		if prev:
 			print(f'\nfinished first while loop, prev = {prev.key}\n')
 		if self.root:
 			print(f'the current root is: {self.root.key}')
 		if cur:
 			print(f'cur is: {cur.key}')
+		
+		
 		if cur == self.root:
 			self.root = x
 			self.parents[x] = None #  Track parent
@@ -65,22 +66,22 @@ class ZipZipTreeBF(ZipZipTree):
 		else:
 			prev.right = x
 			self.parents[x] = prev  #  Track parent
-		if self.root:
-			print(f'updated root: {self.root}')
+		#if self.root:
+		#	print(f'updated root: {self.root}')
 		if cur == None:
 			x.left = None
 			x.right = None
-			print(f"RETURNING EARLY AS IN RIGHT NOW, KEY IS {key}")
+			#print(f"RETURNING EARLY AS IN RIGHT NOW, KEY IS {key}")
 			self.backpropagate_best_remaining(x) #update all parent's best remaining
 
 			return
 		if key < cur.key:
-			print(f'key{key} is less than cur.key{cur.key}')
+			#print(f'key{key} is less than cur.key{cur.key}')
 			x.right = cur
 			self.parents[cur] = x  #  Update parent
 			self.backpropagate_best_remaining(x.right)
 		else:
-			print(f'key{key} is greater than cur.key{cur.key}')
+			#print(f'key{key} is greater than cur.key{cur.key}')
 			x.left = cur
 			self.parents[cur] = x  #  Update parent
 			self.backpropagate_best_remaining(x.left)
@@ -92,9 +93,11 @@ class ZipZipTreeBF(ZipZipTree):
 		print('How the tree looks after section 2 ###########')
 		self.print_tree()
 		print(f'\nfinished section 3 if statements, prev is {prev.key}, cur is {cur.key}\n')
+		
+		
 		while cur:
 			fix = prev
-			print(f'\nin section 4 while loop, fix is {fix.key}, cur is {cur.key}, key is {key}\n')
+			#print(f'\nin section 4 while loop, fix is {fix.key}, cur is {cur.key}, key is {key}\n')
 			if cur.key < key:
 				while cur and (cur.key < key or isclose(cur.key[0],key[0], rel_tol=EPS)):
 					prev = cur
@@ -103,9 +106,15 @@ class ZipZipTreeBF(ZipZipTree):
 				while cur and (cur.key > key or isclose(cur.key[0],key[0], rel_tol=EPS)):
 					prev = cur
 					cur = cur.left
+			
 			print(f'\nmid section 4 heres the tree\n')
 			self.print_tree()
-			print(f'mid section 4 fix.key {fix.key}, key: {key}, prev: {prev.key}, cur: {cur}, x: {x}')
+			print(f'\nmid section 4 fix.key {fix.key}, key: {key}, prev: {prev.key}, cur: {cur}, x: {x}')
+			print(f'fix == x: {fix == x}')
+			print(f'prev.key > key: {prev.key > key}')
+			print(f'fix.key > key: {fix.key > key}')
+			print(f'fix: {fix}')
+			
 			if fix.key > key or (fix == x and prev.key > key):
 				fix.left = cur
 				if cur: self.parents[cur] = fix  #  Update parent
@@ -118,7 +127,7 @@ class ZipZipTreeBF(ZipZipTree):
 		self.backpropagate_best_remaining(x) #update all parent's best remaining
 		
 	def remove(self, key: KeyType):
-		#print(f"REMOVING NODE WITH KEY {key}, TREE BEFORE REMOVAL:")
+		print(f"REMOVING NODE WITH KEY {key}, TREE BEFORE REMOVAL:")
 		self.print_tree()
 
 		cur = self.root
@@ -175,8 +184,8 @@ class ZipZipTreeBF(ZipZipTree):
 				if left:
 					self.parents[left] = prev
 		if prev:
-			#print(f"BACKPROPAGATING ON PREV: {prev.key}")
-			#print("HERE IS THE TREE BEFORE PROPAGATION:")
+			print(f"BACKPROPAGATING ON PREV: {prev.key}")
+			print("HERE IS THE TREE BEFORE PROPAGATION:")
 			self.print_tree()
 			self.backpropagate_best_remaining(prev)
 		self.size -= 1
@@ -209,6 +218,7 @@ class ZipZipTreeBF(ZipZipTree):
 				print(f"Right     → key: {node.right.key}, val: {node.right.val}, best_remaining: {node.right.best_remaining}")
 			else:
 				print("Right     → None")
+			
 
 			old_best = node.best_remaining
 			self.update_best_remaining(node)
@@ -273,8 +283,10 @@ class ZipZipTreeBF(ZipZipTree):
 			else:
 				temp = (node.key[0] - size, node.key[1])
 			
+
 			self.remove(node.key)
-			self.insert(temp,1)
+			if(temp[0] != 0):
+				self.insert(temp,1)
 			#self.backpropagate_best_remaining(temp)
 			return temp[1]
 		else:

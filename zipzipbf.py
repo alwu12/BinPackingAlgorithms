@@ -2,9 +2,7 @@ from zipzip_tree import *
 from math import isclose
 import random
 
-random.seed(43)
-#42 is a passed case
-#41 is a failed case
+#random.seed(2) #fails test case 4
 EPS = 4e-11
 
 class Node: 
@@ -43,14 +41,15 @@ class ZipZipTreeBF(ZipZipTree):
 		x = Node(key,val,rank)
 		cur = self.root
 		prev = None
-		old_root = self.root #im planning to use this to help update BRC in if cur == self.root
 		while cur and (rank < cur.rank or (rank == cur.rank and key > cur.key)):
 			prev = cur
 			if (key < cur.key):
 				cur = cur.left
 			else:
 				cur = cur.right
-
+		
+		
+		
 		if cur == self.root:
 			self.root = x
 			self.parents[x] = None #  Track parent
@@ -60,25 +59,31 @@ class ZipZipTreeBF(ZipZipTree):
 		else:
 			prev.right = x
 			self.parents[x] = prev  #  Track parent
-
+		#if self.root:
+		#	print(f'updated root: {self.root}')
 		if cur == None:
 			x.left = None
 			x.right = None
+			#print(f"RETURNING EARLY AS IN RIGHT NOW, KEY IS {key}")
 			self.backpropagate_best_remaining(x) #update all parent's best remaining
 
 			return
 		if key < cur.key:
+			#print(f'key{key} is less than cur.key{cur.key}')
 			x.right = cur
 			self.parents[cur] = x  #  Update parent
 			self.backpropagate_best_remaining(x.right)
 		else:
+			#print(f'key{key} is greater than cur.key{cur.key}')
 			x.left = cur
 			self.parents[cur] = x  #  Update parent
 			self.backpropagate_best_remaining(x.left)
 		prev = x
 		
+		
 		while cur:
 			fix = prev
+			#print(f'\nin section 4 while loop, fix is {fix.key}, cur is {cur.key}, key is {key}\n')
 			if cur.key < key:
 				while cur and (cur.key < key or isclose(cur.key[0],key[0], rel_tol=EPS)):
 					prev = cur
@@ -87,6 +92,7 @@ class ZipZipTreeBF(ZipZipTree):
 				while cur and (cur.key > key or isclose(cur.key[0],key[0], rel_tol=EPS)):
 					prev = cur
 					cur = cur.left
+			
 			if fix.key > key or (fix == x and prev.key > key):
 				fix.left = cur
 				if cur: self.parents[cur] = fix  #  Update parent
@@ -94,6 +100,7 @@ class ZipZipTreeBF(ZipZipTree):
 				fix.right = cur
 				if cur: self.parents[cur] = fix  #  Update parent
 			self.backpropagate_best_remaining(fix)
+
 		self.backpropagate_best_remaining(x) #update all parent's best remaining
 		
 	def remove(self, key: KeyType):
@@ -169,10 +176,7 @@ class ZipZipTreeBF(ZipZipTree):
 	def backpropagate_best_remaining(self, node: Node):
 		while node is not None:
 			parent = self.parents.get(node)#debug starts here
-			old_best = node.best_remaining
 			self.update_best_remaining(node)
-			#print(f"Updated   → old_best: {old_best}, new_best: {node.best_remaining}")
-
 			node = parent
 
 	
@@ -181,13 +185,15 @@ class ZipZipTreeBF(ZipZipTree):
 		x = self.root
 
 		while x:
-
 			if x.left and (x.left.best_remaining > size + EPS or isclose(x.left.best_remaining, size, rel_tol=EPS)):
+
 				x = x.left
 			elif x.key[0] > size + EPS or isclose(x.key[0], size, rel_tol=EPS):
+				#changed to use key because thats how we are storing capacity
+
 				result = x
 				break
-			elif x.right:
+			elif x.right:				
 				if x.right.best_remaining > size + EPS or isclose(x.right.best_remaining, size, rel_tol=EPS):
 					x = x.right
 				else:
@@ -209,8 +215,10 @@ class ZipZipTreeBF(ZipZipTree):
 			else:
 				temp = (node.key[0] - size, node.key[1])
 			
+
 			self.remove(node.key)
-			self.insert(temp,1)
+			if(temp[0] != 0):
+				self.insert(temp,1)
 			#self.backpropagate_best_remaining(temp)
 			return temp[1]
 		else:

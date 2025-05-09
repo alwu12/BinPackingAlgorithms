@@ -375,7 +375,7 @@ def bin_packing_best_fit_tests():
 
 
 	
-
+	
 	print('\ntest 1')
 	items = [0.1, 0.8, 0.3, 0.5, 0.7, 0.2, 0.6, 0.4]
 	assignments = [0] * len(items)
@@ -399,6 +399,8 @@ def bin_packing_best_fit_tests():
 	test3 = ProblemInstance(items=items, assignments=assignments, free_space=free_space)
 	expected_result = ProblemInstance(items=items, assignments=[0, 1, 1, 0, 2, 0, 3], free_space=[0.12, 0.0, 0.46, 0.36])
 	test_algorithm(test3, expected_result, requirements.best_fit, 'best_fit')
+	
+	
 
 	print('\ntest 4')
 	items = [0.54, 0.67, 0.46, 0.57, 0.06, 0.23, 0.83, 0.64, 0.47, 0.03, 0.53, 0.74, 0.36, 0.24, 0.07, 0.25, 0.05, 0.63, 0.43, 0.04]
