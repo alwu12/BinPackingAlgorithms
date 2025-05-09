@@ -1,10 +1,9 @@
 from zipzip_tree import *
 from math import isclose
-from decimal import Decimal
 import random
 
 #random.seed(2) #fails test case 4
-EPS = Decimal('4e-11')
+EPS = 4e-11
 
 class Node: 
 	def __init__(self, key: KeyType, val: ValType, rank: Rank, left = None, right = None):
@@ -223,7 +222,7 @@ class ZipZipTreeBF(ZipZipTree):
 			#self.backpropagate_best_remaining(temp)
 			return temp[1]
 		else:
-			new_key = (Decimal('1.0')-size,bin_index + 1)
+			new_key = (1.0-size,bin_index + 1)
 			self.insert(new_key, 1)
 			return new_key[1]
 
