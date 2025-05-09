@@ -1,9 +1,6 @@
-from math import isclose
-from decimal import Decimal, getcontext
 import zipzipff
 from tim_sort import tim_sort
 
-getcontext().prec = 45
 
 
 

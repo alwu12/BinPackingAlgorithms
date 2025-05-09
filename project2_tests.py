@@ -370,12 +370,50 @@ def bin_packing_first_fit_tests():
 	
 	
 	
+def bin_packing_best_fit_tests():
+	print('\nBEST-FIT TESTS')
 
+
+	
+
+	print('\ntest 1')
+	items = [0.1, 0.8, 0.3, 0.5, 0.7, 0.2, 0.6, 0.4]
+	assignments = [0] * len(items)
+	free_space = list()
+	test1 = ProblemInstance(items=items, assignments=assignments, free_space=free_space)
+	expected_result = ProblemInstance(items=items, assignments=[0, 0, 1, 1, 2, 1, 3, 3], free_space=[0.1, 0.0, 0.3, 0.0])
+	test_algorithm(test1, expected_result, requirements.best_fit, 'best_fit')
+
+	print('\ntest 2')
+	items = [0.79, 0.88, 0.95, 0.12, 0.05, 0.46, 0.53, 0.64, 0.04, 0.38, 0.03, 0.26]
+	assignments = [0] * len(items)
+	free_space = list()
+	test2 = ProblemInstance(items=items, assignments=assignments, free_space=free_space)
+	expected_result = ProblemInstance(items=items, assignments=[0, 1, 2, 1, 2, 3, 3, 4, 0, 5, 0, 4], free_space=[0.14, 0.0, 0.0, 0.01, 0.1, 0.62])
+	test_algorithm(test2, expected_result, requirements.best_fit, 'best_fit')
+
+	print('\ntest 3')
+	items = [0.43, 0.75, 0.25, 0.42, 0.54, 0.03, 0.64]
+	assignments = [0] * len(items)
+	free_space = list()
+	test3 = ProblemInstance(items=items, assignments=assignments, free_space=free_space)
+	expected_result = ProblemInstance(items=items, assignments=[0, 1, 1, 0, 2, 0, 3], free_space=[0.12, 0.0, 0.46, 0.36])
+	test_algorithm(test3, expected_result, requirements.best_fit, 'best_fit')
+
+	print('\ntest 4')
+	items = [0.54, 0.67, 0.46, 0.57, 0.06, 0.23, 0.83, 0.64, 0.47, 0.03, 0.53, 0.74, 0.36, 0.24, 0.07, 0.25, 0.05, 0.63, 0.43, 0.04]
+	assignments = [0] * len(items)
+	free_space = list()
+	test4 = ProblemInstance(items=items, assignments=assignments, free_space=free_space)
+	expected_result = ProblemInstance(items=items, assignments=[0, 1, 0, 2, 1, 1, 3, 4, 5, 1, 5, 6, 4, 6, 3, 2, 3, 7, 8, 3], free_space=[0.0, 0.01, 0.18, 0.01, 0.0, 0.0, 0.02, 0.37, 0.57])
+	test_algorithm(test4, expected_result, requirements.best_fit, 'best_fit')
+	
 	
 	
 if __name__ == '__main__':
 	#zip_tree_tests()
 	#bin_packing_tests()
 	#bin_packing_first_fit_tests()
-	bin_packing_next_fit_tests()
+	#bin_packing_next_fit_tests()
 	#bin_packing_first_fit_test3()
+	bin_packing_best_fit_tests()
