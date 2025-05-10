@@ -58,12 +58,11 @@ class ZipZipTreeBF(ZipZipTree):
 		else:
 			prev.right = x
 			self.parents[x] = prev  #  Track parent
-		if self.root:
+
 		if cur == None:
 			x.left = None
 			x.right = None
 			self.backpropagate_best_remaining(x) #update all parent's best remaining
-
 			return
 		if key < cur.key:
 			x.right = cur
