@@ -49,8 +49,6 @@ class ZipZipTreeBF(ZipZipTree):
 			else:
 				cur = cur.right
 		
-		
-		
 		if cur == self.root:
 			self.root = x
 			self.parents[x] = None #  Track parent
@@ -60,40 +58,35 @@ class ZipZipTreeBF(ZipZipTree):
 		else:
 			prev.right = x
 			self.parents[x] = prev  #  Track parent
-		#if self.root:
-		#	print(f'updated root: {self.root}')
+		if self.root:
 		if cur == None:
 			x.left = None
 			x.right = None
-			#print(f"RETURNING EARLY AS IN RIGHT NOW, KEY IS {key}")
 			self.backpropagate_best_remaining(x) #update all parent's best remaining
 
 			return
 		if key < cur.key:
-			#print(f'key{key} is less than cur.key{cur.key}')
 			x.right = cur
 			self.parents[cur] = x  #  Update parent
 			self.backpropagate_best_remaining(x.right)
 		else:
-			#print(f'key{key} is greater than cur.key{cur.key}')
 			x.left = cur
 			self.parents[cur] = x  #  Update parent
 			self.backpropagate_best_remaining(x.left)
 		prev = x
 		
-		
 		while cur:
 			fix = prev
-			#print(f'\nin section 4 while loop, fix is {fix.key}, cur is {cur.key}, key is {key}\n')
 			if cur.key < key:
-				while cur and (cur.key < key or isclose(cur.key[0],key[0], rel_tol=EPS)):
+				while cur and (cur.key < key or cur.key == key):
 					prev = cur
 					cur = cur.right
 			else:
-				while cur and (cur.key > key or isclose(cur.key[0],key[0], rel_tol=EPS)):
+				while cur and (cur.key > key or cur.key ==key):
 					prev = cur
 					cur = cur.left
-			
+
+
 			if fix.key > key or (fix == x and prev.key > key):
 				fix.left = cur
 				if cur: self.parents[cur] = fix  #  Update parent
@@ -105,9 +98,12 @@ class ZipZipTreeBF(ZipZipTree):
 		self.backpropagate_best_remaining(x) #update all parent's best remaining
 		
 	def remove(self, key: KeyType):
-
 		cur = self.root
 		
+		# Early return if tree is empty or key not found
+		if cur is None:
+			return
+
 		prev = None
 		while key != cur.key:
 			prev = cur
@@ -115,6 +111,9 @@ class ZipZipTreeBF(ZipZipTree):
 				cur = cur.left
 			else:
 				cur = cur.right
+			if cur is None:
+				return
+
 		left = cur.left
 		right = cur.right
 
@@ -142,25 +141,25 @@ class ZipZipTreeBF(ZipZipTree):
 			if cur:
 				self.parents[cur] = prev
 
-
 		while left and right:
 			if left.rank >= right.rank:
-				while(left and left.rank >= right.rank):
+				while left and left.rank >= right.rank:
 					prev = left
 					left = left.right
-
 				prev.right = right
 				if right:
 					self.parents[right] = prev
 			else:
-				while(right and left.rank < right.rank):
+				while right and left.rank < right.rank:
 					prev = right
 					right = right.left
 				prev.left = left
 				if left:
 					self.parents[left] = prev
+
 		if prev:
 			self.backpropagate_best_remaining(prev)
+		
 		self.size -= 1
 
 
