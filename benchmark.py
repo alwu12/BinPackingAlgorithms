@@ -11,9 +11,7 @@ DATA_DIRECTORY.mkdir(exist_ok=True) #if directory already exists, the parameter 
 
 @unique
 class PermutationType(Enum):
-    UNIFORMLY_DISTRIBUTED = 'uniform'
-    ALTERNATING = 'alternating' 
-    ALMOST_SORTED = 'almost_sorted'
+    RANDOMLY_DISTRIBUTED = 'random'
 
 BIN_PACKING_ALGORITHMS = {
     'next_fit' : requirements.next_fit,
@@ -45,14 +43,14 @@ def generate_random_list(size: int, permutation: PermutationType) -> list[int]:
     match permutation:
         case PermutationType.UNIFORMLY_DISTRIBUTED:
             random.shuffle(x=nums)
-        case PermutationType.ALTERNATING:
-            nums = [i for i in range(1, size + 1, 2)] + [i for i in range(2, size + 1, 2)]
-        case PermutationType.ALMOST_SORTED:
+        #case PermutationType.ALTERNATING:
+        #    nums = [i for i in range(1, size + 1, 2)] + [i for i in range(2, size + 1, 2)]
+        #case PermutationType.ALMOST_SORTED:
             # Introduce a small number of random swaps to make the list almost sorted
-            num_swaps = size // 10  # For example, 10% of the list size
-            for _ in range(num_swaps):
-                i, j = random.sample(range(size), 2)
-                nums[i], nums[j] = nums[j], nums[i]
+        #    num_swaps = size // 10  # For example, 10% of the list size
+        #    for _ in range(num_swaps):
+        #        i, j = random.sample(range(size), 2)
+        #        nums[i], nums[j] = nums[j], nums[i]
 
     return nums
 
@@ -61,7 +59,7 @@ def run_benchmark(size: int)->None:
     for permutation in PermutationType:
         nums = generate_random_list(size,permutation)
 
-        for algorithm_name, algorithm in SORTING_ALGORITHMS.items():
+        for algorithm_name, algorithm in BIN_PACKING_ALGORITHMS.items():
             #copy the list to ensure each algorithm works with the same input
             nums_copy = nums.copy()
 
@@ -75,10 +73,11 @@ def run_benchmark(size: int)->None:
             save_data(algorithm_name,size,permutation,elapsed_time_ns)
 
 def run_benchmarks(): #should do 10 runs of up to 2^16
-    for round_num in range(10):
+    for round_num in range(1): #we want to run for 2000 runs, so lets make 200 jobs
+        #change back to 10 to do 10 runs later
         print(f"\n=== Round {round_num + 1}/10 ===")
 
-        for exp in range(1, 17):  # from 2^1 to 2^16
+        for exp in range(1, 20):  # from 2^1 to 2^20
             size = 2 ** exp
             print(f"Running benchmark for size: {size}")
             start_time_ns = time.process_time_ns()
@@ -89,39 +88,6 @@ def run_benchmarks(): #should do 10 runs of up to 2^16
             elapsed_time_ns = end_time_ns - start_time_ns
             print(f"Benchmark completed in {elapsed_time_ns / 1_000_000:.2f} ms")
 
-def run_alternating_benchmark(size: int) -> None:#here because i dont wanna runt he full benchmark for all 3 permutations
-    # Generate the alternating permutation
-    nums = generate_random_list(size, PermutationType.ALTERNATING)
-
-    for algorithm_name, algorithm in SORTING_ALGORITHMS.items():
-        # Copy the list to ensure each algorithm works with the same input
-        nums_copy = nums.copy()
-
-        start_time_ns = time.process_time_ns()
-
-        algorithm(nums_copy)
-
-        end_time_ns = time.process_time_ns()
-        elapsed_time_ns = end_time_ns - start_time_ns
-
-        save_data(algorithm_name, size, PermutationType.ALTERNATING, elapsed_time_ns)
-
-def run_benchmarks_alternating():  # Run benchmarks only for alternating permutation
-    for round_num in range(10):
-        print(f"\n=== Round {round_num + 1}/10 ===")
-
-        for exp in range(1, 17):  # from 2^1 to 2^16
-            size = 2 ** exp
-            print(f"Running benchmark for size: {size}")
-            start_time_ns = time.process_time_ns()
-
-            # Only run benchmark for alternating permutation
-            run_alternating_benchmark(size)
-
-            end_time_ns = time.process_time_ns()
-            elapsed_time_ns = end_time_ns - start_time_ns
-            print(f"Benchmark completed in {elapsed_time_ns / 1_000_000:.2f} ms")
-
 if __name__ == "__main__":
-    #run_benchmarks()
-    run_benchmarks_alternating()
+    run_benchmarks()
+    #run_benchmarks_alternating()
