@@ -41,7 +41,7 @@ def generate_random_list(size: int, permutation: PermutationType) -> list[int]:
     nums = list(range(size))
 
     match permutation:
-        case PermutationType.UNIFORMLY_DISTRIBUTED:
+        case PermutationType.RANDOMLY_DISTRIBUTED:
             random.shuffle(x=nums)
         #case PermutationType.ALTERNATING:
         #    nums = [i for i in range(1, size + 1, 2)] + [i for i in range(2, size + 1, 2)]
@@ -58,6 +58,10 @@ def generate_random_list(size: int, permutation: PermutationType) -> list[int]:
 def run_benchmark(size: int)->None:
     for permutation in PermutationType:
         nums = generate_random_list(size,permutation)
+        zeroes = [0] * size #not being used
+        waste = [] #not being used
+        #these are used to satisfy the positional arguments in each algorithm because they need both assignment and free_space
+        
 
         for algorithm_name, algorithm in BIN_PACKING_ALGORITHMS.items():
             #copy the list to ensure each algorithm works with the same input
@@ -65,7 +69,7 @@ def run_benchmark(size: int)->None:
 
             start_time_ns = time.process_time_ns()
 
-            algorithm(nums_copy)
+            algorithm(nums_copy,zeroes,waste)
 
             end_time_ns = time.process_time_ns()
             elapsed_time_ns = end_time_ns - start_time_ns
@@ -73,7 +77,7 @@ def run_benchmark(size: int)->None:
             save_data(algorithm_name,size,permutation,elapsed_time_ns)
 
 def run_benchmarks(): #should do 10 runs of up to 2^16
-    for round_num in range(1): #we want to run for 2000 runs, so lets make 200 jobs
+    for round_num in range(10): #we want to run for 2000 runs, so lets make 200 jobs
         #change back to 10 to do 10 runs later
         print(f"\n=== Round {round_num + 1}/10 ===")
 
