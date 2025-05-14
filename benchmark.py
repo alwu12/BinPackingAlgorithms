@@ -77,11 +77,11 @@ def run_benchmark(size: int)->None:
             save_data(algorithm_name,size,permutation,elapsed_time_ns)
 
 def run_benchmarks(): #should do 10 runs of up to 2^16
-    for round_num in range(10): #we want to run for 2000 runs, so lets make 200 jobs
+    for round_num in range(200): #we want to run for 2000 runs, so lets make 200 jobs
         #change back to 10 to do 10 runs later
         print(f"\n=== Round {round_num + 1}/10 ===")
 
-        for exp in range(1, 20):  # from 2^1 to 2^20
+        for exp in range(1, 21):  # from 2^1 to 2^20
             size = 2 ** exp
             print(f"Running benchmark for size: {size}")
             start_time_ns = time.process_time_ns()
