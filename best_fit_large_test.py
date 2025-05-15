@@ -65,6 +65,85 @@ def test_random_insert_remove(n=10, seed=42):
 
     print(f"Tree size after deletions: {tree.size}")
 
+def test_best_fit_10_items(seed=42):
+    random.seed(seed)
+    items = [round(random.uniform(0.01, 0.99), 2) for _ in range(10)]
+    print(f"Items: {items}")
+
+    assignment = [0] * len(items)
+    free_space = []
+
+    tree = best_fit(items, assignment, free_space)
+
+    print(f"\nAssignments: {assignment}")
+    print(f"Free space per bin (actual waste): {free_space}")
+    print(f"Total bins used: {len(set(assignment))}")
+
+    # Check for cycles in the tree
+    if check_tree_for_cycles(tree.root):
+        print("❌ Cycle detected in the tree.")
+    else:
+        print("✅ No cycles detected in the tree.")
+
+    # Compute expected waste per bin
+    expected_waste = []
+    num_bins = len(set(assignment))
+    for bin_id in range(num_bins):
+        bin_sum = sum(items[i] for i in range(len(items)) if assignment[i] == bin_id)
+        waste = round(1.0 - bin_sum, 6)
+        expected_waste.append(waste)
+
+    print(f"Expected waste: {expected_waste}")
+
+    # Compare actual and expected waste
+    print("\nComparing actual vs expected waste...")
+    for i, (actual, expected) in enumerate(zip(free_space, expected_waste)):
+        if abs(actual - expected) > 1e-6:
+            print(f"❌ Bin {i}: actual={actual:.6f}, expected={expected:.6f}")
+        else:
+            print(f"✅ Bin {i}: matches (waste = {actual:.6f})")
+    
+def test_best_fit_20_items(seed=42):
+    random.seed(seed)
+    items = [round(random.uniform(0.01, 0.99), 2) for _ in range(20)]
+    print(f"Items: {items}")
+
+    assignment = [0] * len(items)
+    free_space = []
+
+    tree = best_fit(items, assignment, free_space)
+
+    print(f"\nAssignments: {assignment}")
+    print(f"Free space per bin (actual waste): {free_space}")
+    print(f"Total bins used: {len(set(assignment))}")
+
+    # Check for cycles in the tree
+    if check_tree_for_cycles(tree.root):
+        print("❌ Cycle detected in the tree.")
+    else:
+        print("✅ No cycles detected in the tree.")
+
+    # Compute expected waste per bin
+    expected_waste = []
+    num_bins = len(set(assignment))
+    for bin_id in range(num_bins):
+        bin_sum = sum(items[i] for i in range(len(items)) if assignment[i] == bin_id)
+        waste = round(1.0 - bin_sum, 6)
+        expected_waste.append(waste)
+
+    print(f"Expected waste: {expected_waste}")
+
+    # Compare actual and expected waste
+    print("\nComparing actual vs expected waste...")
+    for i, (actual, expected) in enumerate(zip(free_space, expected_waste)):
+        if abs(actual - expected) > 1e-6:
+            print(f"❌ Bin {i}: actual={actual:.6f}, expected={expected:.6f}")
+        else:
+            print(f"✅ Bin {i}: matches (waste = {actual:.6f})")
+
+
 if __name__ == '__main__':
     #run_best_fit_with_1500000_items()
-    test_random_insert_remove()
+    #test_random_insert_remove()
+    #test_best_fit_10_items()
+    test_best_fit_20_items()

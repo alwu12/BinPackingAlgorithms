@@ -29,30 +29,23 @@ def get_data_path(algorithm_name: str, permutation: PermutationType) -> Path:
 #data/shell_sort3/RANDOM.csv
 
 
-def save_data(algorithm_name: str, size: int, permutation:PermutationType, elapsed_time_ns: int) -> None:
+def save_data(algorithm_name: str, size: int, permutation:PermutationType, wasted_amount: int) -> None:
     file_path = get_data_path(algorithm_name,permutation)
 
-    with open(file_path,mode='a') as file:#appends to end of a file
+    with open(file_path,mode='a', newline='') as file:#appends to end of a file
         writer = csv.writer(file)
-        writer.writerow([size,elapsed_time_ns])
+        writer.writerow([size,wasted_amount])
 
 
-def generate_random_list(size: int, permutation: PermutationType) -> list[int]:
-    nums = list(range(size))
+def generate_random_list(size: int, permutation: PermutationType) -> list[float]:
+    nums = [round(random.uniform(0.1001, 0.9999), 4) for _ in range(size)]
 
     match permutation:
         case PermutationType.RANDOMLY_DISTRIBUTED:
-            random.shuffle(x=nums)
-        #case PermutationType.ALTERNATING:
-        #    nums = [i for i in range(1, size + 1, 2)] + [i for i in range(2, size + 1, 2)]
-        #case PermutationType.ALMOST_SORTED:
-            # Introduce a small number of random swaps to make the list almost sorted
-        #    num_swaps = size // 10  # For example, 10% of the list size
-        #    for _ in range(num_swaps):
-        #        i, j = random.sample(range(size), 2)
-        #        nums[i], nums[j] = nums[j], nums[i]
+            random.shuffle(nums)
 
     return nums
+
 
 
 def run_benchmark(size: int)->None:
@@ -66,22 +59,24 @@ def run_benchmark(size: int)->None:
         for algorithm_name, algorithm in BIN_PACKING_ALGORITHMS.items():
             #copy the list to ensure each algorithm works with the same input
             nums_copy = nums.copy()
+            zeroes_copy = zeroes.copy()
+            waste_copy = waste.copy()
+            #start_time_ns = time.process_time_ns()
 
-            start_time_ns = time.process_time_ns()
+            algorithm(nums_copy,zeroes_copy,waste_copy)
 
-            algorithm(nums_copy,zeroes,waste)
+            #end_time_ns = time.process_time_ns()
+            #elapsed_time_ns = end_time_ns - start_time_ns
+            waste_result = len(waste_copy) - sum(waste_copy)
 
-            end_time_ns = time.process_time_ns()
-            elapsed_time_ns = end_time_ns - start_time_ns
-
-            save_data(algorithm_name,size,permutation,elapsed_time_ns)
+            save_data(algorithm_name,size,permutation,waste_result)
 
 def run_benchmarks(): #should do 10 runs of up to 2^16
-    for round_num in range(200): #we want to run for 2000 runs, so lets make 200 jobs
+    for round_num in range(734): #we want to run for 2000 runs, so lets make 200 jobs
         #change back to 10 to do 10 runs later
         print(f"\n=== Round {round_num + 1}/10 ===")
 
-        for exp in range(1, 21):  # from 2^1 to 2^20
+        for exp in range(1, 20):  # from 2^1 to 2^20
             size = 2 ** exp
             print(f"Running benchmark for size: {size}")
             start_time_ns = time.process_time_ns()
