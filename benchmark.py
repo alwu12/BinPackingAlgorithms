@@ -67,7 +67,7 @@ def run_benchmark(size: int)->None:
 
             #end_time_ns = time.process_time_ns()
             #elapsed_time_ns = end_time_ns - start_time_ns
-            waste_result = len(waste_copy) - sum(waste_copy)
+            waste_result = len(waste_copy) - sum(nums_copy)
 
             save_data(algorithm_name,size,permutation,waste_result)
 
