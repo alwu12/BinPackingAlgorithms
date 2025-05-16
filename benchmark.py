@@ -38,7 +38,7 @@ def save_data(algorithm_name: str, size: int, permutation:PermutationType, waste
 
 
 def generate_random_list(size: int, permutation: PermutationType) -> list[float]:
-    nums = [round(random.uniform(0.1001, 0.9999), 4) for _ in range(size)]
+    nums = [round(random.uniform(0.0, 0.35), 4) for _ in range(size)]
 
     match permutation:
         case PermutationType.RANDOMLY_DISTRIBUTED:
@@ -72,7 +72,7 @@ def run_benchmark(size: int)->None:
             save_data(algorithm_name,size,permutation,waste_result)
 
 def run_benchmarks(): #should do 10 runs of up to 2^16
-    for round_num in range(734): #we want to run for 2000 runs, so lets make 200 jobs
+    for round_num in range(1000): #we want to run for 2000 runs, so lets make 200 jobs
         #change back to 10 to do 10 runs later
         print(f"\n=== Round {round_num + 1}/10 ===")
 
