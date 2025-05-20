@@ -6,11 +6,11 @@ import numpy as np
 
 
 BIN_PACKING_ALGORITHMS = [
-    'next_fit',
-    'first_fit',
-    'first_fit_decreasing',
-    'best_fit',
-    'best_fit_decreasing'
+    #'next_fit'
+    #'first_fit'
+    'first_fit_decreasing'
+    #'best_fit'
+    #'best_fit_decreasing'
 ]
 
 
@@ -38,15 +38,17 @@ def plot_alg(data, label, markersize, color, legend_handles):
 
     x = np.array(x_vals)
     y = np.array(y_vals)
-    logx = np.log2(x)
-    logy = np.log2(y)
+    x_fit = x[0:]#this ignores the first 5 values when making our line of best fit
+    y_fit = y[0:]
+    logx = np.log2(x_fit)
+    logy = np.log2(y_fit)
     m, b = np.polyfit(logx, logy, 1)
 
 
     equation = f"y = {m:.5f} * log N + {b:.2f}"
     
 
-    plt.loglog(x, 2 ** (m * logx + b), color=color)
+    plt.loglog(x_fit, 2 ** (m * logx + b), color=color)
     legend_handles[label] = plt.Line2D([0], [0], marker='o', color='red', label=f"{label} ({equation})", markersize=6, linestyle='None')
     
 def plot_algorithm(data, algorithm_name):
@@ -59,10 +61,11 @@ def plot_algorithm(data, algorithm_name):
     plt.xscale('log', base=2)
     plt.yscale('log', base=2)
     plt.xlabel("Input Size")
-    plt.ylabel("Time (ns)")
+    plt.ylabel("Waste")
     plt.yticks()
     plt.title(f"{algorithm_name.replace('_', ' ').title()} Performance")
     #plt.legend(handles=[legend_handles['ALMOST_SORTED'], legend_handles['ALTERNATING'], legend_handles['UNIFORMLY_DISTRIBUTED']])
+    plt.legend(handles=list(legend_handles.values()))
     plt.grid(True)
     plt.show()
 

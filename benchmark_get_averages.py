@@ -67,4 +67,4 @@ if __name__ == "__main__":
     all_data = load_all_folders(base_directory)  # Call the function to load all folder data
     
     # Optionally, print the result to check the output
-    print(all_data)
+    #print(all_data)
